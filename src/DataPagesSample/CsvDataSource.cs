@@ -59,28 +59,29 @@ namespace DataPagesSample
 
         protected override async Task<IList<IDataItem>> GetRawData()
         {
-            if (initialized) return dataItems;
-
-            IsLoading = true;
-
-            var csv = await CsvFile.AsyncLoad(
-                        Path,
-                        FSharpOption<string>.Some(Separator),
-                        FSharpOption<char>.Some(Quote),
-                        FSharpOption<bool>.Some(HasHeaders),
-                        FSharpOption<bool>.Some(false),
-                        FSharpOption<int>.Some(0));
-
-            var rows = csv.Rows;
-
-            foreach (var item in rows.Select(r => new CsvDataRow(r, csv)).Select((r, i) => new DataItem(i.ToString(), r)))
+            if (initialized == false)
             {
-                dataItems.Add(item);
+                IsLoading = true;
+
+                var csv = await CsvFile.AsyncLoad(
+                            Path,
+                            FSharpOption<string>.Some(Separator),
+                            FSharpOption<char>.Some(Quote),
+                            FSharpOption<bool>.Some(HasHeaders),
+                            FSharpOption<bool>.Some(false),
+                            FSharpOption<int>.Some(0));
+
+                var rows = csv.Rows;
+
+                foreach (var item in rows.Select(r => new CsvDataRow(r, csv)).Select((r, i) => new DataItem(i.ToString(), r)))
+                {
+                    dataItems.Add(item);
+                }
+
+                IsLoading = false;
+
+                initialized = true;
             }
-
-            IsLoading = false;
-
-            initialized = true;
 
             return dataItems;
         }

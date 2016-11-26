@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Pages;
 using FSharp.Data;
 using Microsoft.FSharp.Core;
+using Microsoft.FSharp.Control;
 
 namespace DataPagesSample
 {
@@ -60,27 +61,24 @@ namespace DataPagesSample
         {
             if (initialized) return dataItems;
 
-            await Task.Run(() =>
+            IsLoading = true;
+
+            var csv = await CsvFile.AsyncLoad(
+                        Path,
+                        FSharpOption<string>.Some(Separator),
+                        FSharpOption<char>.Some(Quote),
+                        FSharpOption<bool>.Some(HasHeaders),
+                        FSharpOption<bool>.Some(false),
+                        FSharpOption<int>.Some(0));
+
+            var rows = csv.Rows;
+
+            foreach (var item in rows.Select(r => new CsvDataRow(r, csv)).Select((r, i) => new DataItem(i.ToString(), r)))
             {
-                IsLoading = true;
+                dataItems.Add(item);
+            }
 
-                var csv = CsvFile.Load(
-                            Path,
-                            FSharpOption<string>.Some(Separator),
-                            FSharpOption<char>.Some(Quote),
-                            FSharpOption<bool>.Some(HasHeaders),
-                            FSharpOption<bool>.Some(false),
-                            FSharpOption<int>.Some(0));
-
-                var rows = csv.Rows;
-
-                foreach (var item in rows.Select(r => new CsvDataRow(r, csv)).Select((r, i) => new DataItem(i.ToString(), r)))
-                {
-                    dataItems.Add(item);
-                }
-
-                IsLoading = false;
-            });
+            IsLoading = false;
 
             initialized = true;
 

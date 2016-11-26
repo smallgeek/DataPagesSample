@@ -13,7 +13,7 @@ namespace DataPagesSample
         {
             InitializeComponent();
 
-            MainPage = new DataPagesSample.MainPage();
+            MainPage = new NavigationPage(new MainPage());
         }
 
         protected override void OnStart()

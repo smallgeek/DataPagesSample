@@ -2,8 +2,48 @@
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mytheme="clr-namespace:Xamarin.Forms.Themes;assembly=Xamarin.Forms.Theme.Light"
+             xmlns:p="clr-namespace:Xamarin.Forms.Pages;assembly=Xamarin.Forms.Pages"
              x:Class="DataPagesSample.App">
     <Application.Resources>
-        <ResourceDictionary MergedWith="mytheme:LightThemeResources" />
+        <ResourceDictionary MergedWith="mytheme:LightThemeResources">
+
+            <Style x:Key="DetailPageStyle" TargetType="p:DataPage">
+                <Setter Property="ControlTemplate">
+                    <ControlTemplate>
+                        <StackLayout Spacing="0">
+                            <ContentPresenter />
+                            <ListView ItemsSource="{TemplateBinding Data}" ItemTemplate="{TemplateBinding DefaultItemTemplate}" HasUnevenRows="true" />
+                        </StackLayout>
+                    </ControlTemplate>
+                </Setter>
+            </Style>
+
+            <Style TargetType="p:HeroImage">
+                <Setter Property="ControlTemplate">
+                    <ControlTemplate>
+                        <Grid BackgroundColor="Black" HeightRequest="300">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="4*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Image Grid.RowSpan="4" Source="{TemplateBinding ImageSource}" Aspect="{TemplateBinding Aspect}" Opacity="0.6" />
+                            <Label Grid.Row="1" Margin="25,0,0,0" Text="{TemplateBinding Text}" FontSize="25" TextColor="White" />
+                            <Label Grid.Row="2" Margin="25,0,0,0" Text="{TemplateBinding Detail}" FontSize="20" TextColor="White" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter>
+            </Style>
+
+            <DataTemplate x:Key="DetailCell">
+                <ViewCell IsEnabled="false">
+                    <StackLayout Padding="15,5,5,5">
+                        <Label Text="{Binding Name, Converter={StaticResource capitalizeConverter}}" FontSize="16" />
+                        <Label Text="{Binding Value}" FontSize="14" TextColor="#444" LineBreakMode="WordWrap" />
+                    </StackLayout>
+                </ViewCell>
+            </DataTemplate>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

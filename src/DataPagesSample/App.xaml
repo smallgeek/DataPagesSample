@@ -28,7 +28,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Image Grid.RowSpan="4" Source="{TemplateBinding ImageSource}" Aspect="{TemplateBinding Aspect}" Opacity="0.6" />
+                            <Image Grid.RowSpan="4" Source="{TemplateBinding ImageSource}" Aspect="{TemplateBinding Aspect}" Opacity="0.7" />
                             <Label Grid.Row="1" Margin="25,0,0,0" Text="{TemplateBinding Text}" FontSize="25" TextColor="White" />
                             <Label Grid.Row="2" Margin="25,0,0,0" Text="{TemplateBinding Detail}" FontSize="20" TextColor="White" />
                         </Grid>

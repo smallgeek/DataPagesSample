@@ -1,16 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using FSharp.Data;
+using Microsoft.FSharp.Control;
+using Microsoft.FSharp.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Dynamic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms.Pages;
-using FSharp.Data;
-using Microsoft.FSharp.Core;
-using Microsoft.FSharp.Control;
 
 namespace DataPagesSample
 {
@@ -57,26 +53,29 @@ namespace DataPagesSample
         public char Quote { get; set; } = '"';
         public bool HasHeaders { get; set; } = true;
 
+        private async Task<CsvFile> LoadCsv()
+        {
+            return await CsvFile.AsyncLoad(
+                Path,
+                FSharpOption<string>.Some(Separator),
+                FSharpOption<char>.Some(Quote),
+                FSharpOption<bool>.Some(HasHeaders),
+                FSharpOption<bool>.Some(false),
+                FSharpOption<int>.Some(0));
+        }
+
         protected override async Task<IList<IDataItem>> GetRawData()
         {
             if (initialized == false)
             {
                 IsLoading = true;
 
-                var csv = await CsvFile.AsyncLoad(
-                            Path,
-                            FSharpOption<string>.Some(Separator),
-                            FSharpOption<char>.Some(Quote),
-                            FSharpOption<bool>.Some(HasHeaders),
-                            FSharpOption<bool>.Some(false),
-                            FSharpOption<int>.Some(0));
+                var csv = await LoadCsv();
 
-                var rows = csv.Rows;
-
-                foreach (var item in rows.Select(r => new CsvDataRow(r, csv)).Select((r, i) => new DataItem(i.ToString(), r)))
-                {
-                    dataItems.Add(item);
-                }
+                csv.Rows
+                   .Select(row => new CsvDataRow(row, csv))
+                   .Select((data, i) => new DataItem(i.ToString(), data))
+                   .ForEach(item => dataItems.Add(item));
 
                 IsLoading = false;
 
